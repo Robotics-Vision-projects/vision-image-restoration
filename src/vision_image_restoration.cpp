@@ -1,17 +1,9 @@
 
-#include <iostream>
-
 #include <tools.h>
-
-int foo()
-{
-    return 2;
-}
 
 int main(int argc, char** agrv)
 {
-    //std::cout << foo2();
-    std::cout << Tools::frequency_analysis(cv::Mat());
+    cv::Mat test = cv::imread("Image4_1.png", cv::IMREAD_GRAYSCALE);
+    Tools::spectrumDebug(test);
     return 0;
-
 }
