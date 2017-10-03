@@ -13,14 +13,16 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
 # The following folder will be included
-include_directories("${PROJECT_SOURCE_DIR}")
+include_directories("${CMAKE_SOURCE_DIR}/include")
 
 # Use c++11 and check OpenCV 3.
 SET(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 find_package(OpenCV 3 REQUIRED)
 
-# Add the source files to build.
-add_executable(vision_image_restoration src/vision_image_restoration.cpp)
+SET(SOURCEFILES src/vision_image_restoration.cpp src/tools.cpp include/tools.h)
+
+add_executable(vision_image_restoration ${SOURCEFILES})
+
 target_link_libraries(vision_image_restoration ${OpenCV_LIBS})
 
 MESSAGE(${PROJECT_NAME} " done!")
