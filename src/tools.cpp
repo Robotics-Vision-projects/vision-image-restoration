@@ -114,3 +114,27 @@ bool Tools::applyFreqFilter(cv::Mat &input, cv::Mat &output, cv::Mat &filter)
     return true;
 
 }
+
+void Tools::debugRandomKernel(cv::Mat &input, size_t kernelSize, size_t x, size_t y)
+{
+    if( x == 0 && y == 0)
+    {
+        x = input.cols * std::rand();
+        y = input.rows * std::rand();
+    }
+    // forcing the kernel inside the matrix limits
+    x = std::max(std::min(x, input.cols-kernelSize), kernelSize);
+    y = std::max(std::min(y, input.cols-kernelSize), kernelSize);
+
+    std::cout << std::endl;
+    for(int i = y - (kernelSize/2); i < y + (kernelSize/2); ++i)
+    {
+
+        for(size_t j = x - (kernelSize/2); j < x + (kernelSize/2); ++j)
+        {
+            std::cout << input.at<int>(i, j);
+        }
+        std::cout << std::endl;
+    }
+
+}

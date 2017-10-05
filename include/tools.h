@@ -27,4 +27,6 @@ public:
     /// UNFINISHED
     static bool applyFreqFilter(cv::Mat& input, cv::Mat& output, cv::Mat& filter);
 
+    /// \brief selects a random point from the input matrix and displays nearby surrounding values
+    static void debugRandomKernel(cv::Mat& input, size_t kernelSize, size_t x = 0, size_t y = 0);
 };
