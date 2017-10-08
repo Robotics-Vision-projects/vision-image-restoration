@@ -19,7 +19,7 @@ include_directories("${CMAKE_SOURCE_DIR}/include")
 SET(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 find_package(OpenCV 3 REQUIRED)
 
-SET(SOURCEFILES src/vision_image_restoration.cpp src/tools.cpp include/tools.h)
+SET(SOURCEFILES src/vision_image_restoration.cpp src/tools.cpp src/Img1.cpp src/Img2.cpp src/Img3.cpp src/Img4_1.cpp src/Img4_2.cpp src/Img5.cpp include/tools.h include/Img1.h include/Img2.h include/Img3.h include/Img4_1.h include/Img4_2.h include/Img5.h)
 
 add_executable(vision_image_restoration ${SOURCEFILES})
 
