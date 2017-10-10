@@ -1,7 +1,8 @@
 
 #include <tools.h>
 
-// Rearranges the quadrants of a Fourier image so that the origin is at the center of the image.
+// Rearranges the quadrants of a Fourier image so that the origin is at the
+// center of the image.
 void Tools::dftshift(cv::Mat& mag)
 {
     int cx = mag.cols / 2;
@@ -27,7 +28,8 @@ bool Tools::spectrumDebug(cv::Mat &input)
     cv::Mat img = input.clone();
     if(img.channels() != 1)
     {
-        std::cout << std::endl << "Error: this function is for single channel grayscale images, channels: " << img.channels();
+        std::cout << std::endl << "Error: this function is for single channel "
+                "grayscale images, channels: " << img.channels();
         return false;
     }
 
@@ -35,19 +37,22 @@ bool Tools::spectrumDebug(cv::Mat &input)
     cv::Mat padded;
     int opt_rows = cv::getOptimalDFTSize(img.rows);
     int opt_cols = cv::getOptimalDFTSize(img.cols);
-    cv::copyMakeBorder(img, padded, 0, opt_rows - img.rows, 0, opt_cols - img.cols, cv::BORDER_CONSTANT);
+    cv::copyMakeBorder(img, padded, 0, opt_rows - img.rows, 0,
+                       opt_cols - img.cols, cv::BORDER_CONSTANT);
 
     // Make place for both the real and complex values by merging planes into a
     // cv::Mat with 2 channels.
     // Use float element type because frequency domain ranges are large.
-    cv::Mat planes[] = {cv::Mat_<float>(padded), cv::Mat_<float>::zeros(padded.size())};
+    cv::Mat planes[] = {cv::Mat_<float>(padded),
+                        cv::Mat_<float>::zeros(padded.size())};
     cv::Mat complex;
     cv::merge(planes, 2, complex);
 
     // Compute DFT
     cv::dft(complex, complex);
 
-    // Split real and complex planes (you can reuse the 'planes' array to save the result)
+    // Split real and complex planes (you can reuse the 'planes' array to save
+    // the result)
     cv::split(complex, planes);
 
     // Compute the magnitude and phase (see e.g. cv::cartToPolar)
@@ -80,7 +85,8 @@ bool Tools::applyFreqFilter(cv::Mat &input, cv::Mat &output, cv::Mat &filter)
     cv::Mat img = input.clone();
     if(img.channels() != 1)
     {
-        std::cout << std::endl << "Error: this function is for single channel grayscale images, channels: " << img.channels();
+        std::cout << std::endl << "Error: this function is for single channel "
+                "grayscale images, channels: " << img.channels();
         return false;
     }
 
@@ -88,12 +94,14 @@ bool Tools::applyFreqFilter(cv::Mat &input, cv::Mat &output, cv::Mat &filter)
     cv::Mat padded;
     int opt_rows = cv::getOptimalDFTSize(img.rows);
     int opt_cols = cv::getOptimalDFTSize(img.cols);
-    cv::copyMakeBorder(img, padded, 0, opt_rows - img.rows, 0, opt_cols - img.cols, cv::BORDER_CONSTANT);
+    cv::copyMakeBorder(img, padded, 0, opt_rows - img.rows, 0,
+                       opt_cols - img.cols, cv::BORDER_CONSTANT);
 
     // Make place for both the real and complex values by merging planes into a
     // cv::Mat with 2 channels.
     // Use float element type because frequency domain ranges are large.
-    cv::Mat planes[] = {cv::Mat_<float>(padded), cv::Mat_<float>::zeros(padded.size())};
+    cv::Mat planes[] = {cv::Mat_<float>(padded),
+                        cv::Mat_<float>::zeros(padded.size())};
     cv::Mat complex;
     cv::merge(planes, 2, complex);
 
@@ -115,7 +123,8 @@ bool Tools::applyFreqFilter(cv::Mat &input, cv::Mat &output, cv::Mat &filter)
 
 }
 
-void Tools::debugRandomKernel(cv::Mat &input, size_t kernelSize, size_t x, size_t y)
+void Tools::debugRandomKernel(cv::Mat &input, size_t kernelSize,
+                              size_t x, size_t y)
 {
     if( x == 0 && y == 0)
     {

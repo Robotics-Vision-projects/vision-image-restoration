@@ -12,24 +12,30 @@ class Tools
 
 public:
 
-    /// \brief Rearranges the quadrants of a Fourier image so that the origin is at the center of the image
+    /// \brief Rearranges the quadrants of a Fourier image so that the origin is
+    /// at the center of the image
     static void dftshift(cv::Mat& mag);
 
-    /// \brief creates and stores the frequency domain images from the input image
+    /// \brief creates and stores the frequency domain images from the input
+    /// image
     /// \param input this is the input image
     /// \return true = success, false = error
     ///
     /// this would be the detailed description
     static bool spectrumDebug(cv::Mat& input);
 
-    /// \brief apllies a frequency domain filter (with mulSpectrums() ) to the input image, and returns the filtered image
+    /// \brief apllies a frequency domain filter (with mulSpectrums() ) to the
+    /// input image, and returns the filtered image
     /// \param input input image
     /// \param output output image is return here
     /// \param filter complex channel filter matrix
     ///
     /// UNFINISHED
-    static bool applyFreqFilter(cv::Mat& input, cv::Mat& output, cv::Mat& filter);
+    static bool applyFreqFilter(cv::Mat& input, cv::Mat& output,
+                                cv::Mat& filter);
 
-    /// \brief selects a random point from the input matrix and displays nearby surrounding values
-    static void debugRandomKernel(cv::Mat& input, size_t kernelSize, size_t x = 0, size_t y = 0);
+    /// \brief selects a random point from the input matrix and displays nearby
+    /// surrounding values
+    static void debugRandomKernel(cv::Mat& input, size_t kernelSize, 
+                                  size_t x = 0, size_t y = 0);
 };
