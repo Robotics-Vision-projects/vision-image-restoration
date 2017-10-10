@@ -38,4 +38,8 @@ public:
     /// surrounding values
     static void debugRandomKernel(cv::Mat& input, size_t kernelSize, 
                                   size_t x = 0, size_t y = 0);
+
+    /// \brief Get and plot the histogram of the image and save it to a file.
+    /// \param gray_img input greyscale image
+    static cv::Mat get_histogram(cv::Mat &grey_img);
 };

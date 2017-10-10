@@ -72,9 +72,9 @@ bool Tools::spectrumDebug(cv::Mat &input)
     cv::normalize(mag, mag, 0, 1, cv::NORM_MINMAX);
     cv::normalize(phase, phase, 0, 1, cv::NORM_MINMAX);
     mag.convertTo(mag, CV_8UC1, 255);
-    cv::imwrite("debug/magnitude.png", mag);
+    cv::imwrite("./debug/magnitude.png", mag);
     phase.convertTo(phase, CV_8UC1, 255);
-    cv::imwrite("debug/phase.png", phase);
+    cv::imwrite("./debug/phase.png", phase);
 
     return true;
 
@@ -146,4 +146,32 @@ void Tools::debugRandomKernel(cv::Mat &input, size_t kernelSize,
         std::cout << std::endl;
     }
 
+}
+
+cv::Mat Tools::get_histogram(cv::Mat &grey_img){
+    // Calculate histogram of a greyscale image.
+    cv::Mat histogram;
+    int channels[] = {0};
+    int dims = 1;
+    int bins = 256;
+    float range[] = {0, 255};
+    const float *ranges[] = {range};
+    // Calculate the histogram.
+    cv::calcHist(&grey_img, 1, channels, cv::Mat(),
+                 histogram, dims, &bins, ranges);
+    // Draw the histogram on an image
+    cv::Mat hist_img = cv::Mat::ones(2*256, 2*256, CV_8U)*255;
+    // Normalize the histogram values accordingly to the histogram image size.
+    normalize(histogram, histogram, 0, hist_img.rows, cv::NORM_MINMAX, CV_32F);
+    // hist_img = cv::Scalar::all(255);
+    int bin_width = cvRound((double)hist_img.cols/bins);
+    for(auto bin_index = 0; bin_index < bins; bin_index++)
+        {
+            float bin_value = cvRound(histogram.at<float>(bin_index));
+            rectangle(hist_img, cv::Point(bin_index * bin_width, hist_img.rows),
+                      cv::Point((bin_index+1) * bin_width,
+                                hist_img.rows - bin_value), 0, 
+                                CV_FILLED, 8, 0 );
+        }
+    return hist_img;
 }
