@@ -5,9 +5,12 @@
 
 class Img4_1
 {
-private:
+public:
+    Img4_1(cv::Mat& src);
+    cv::Mat createNotchFilter();
+
 
     cv::Mat source;
     cv::Mat result;
 
-}
+};

@@ -10,4 +10,4 @@ private:
     cv::Mat source;
     cv::Mat result;
 
-}
+};

@@ -100,16 +100,32 @@ bool Tools::applyFreqFilter(cv::Mat &input, cv::Mat &output, cv::Mat &filter)
     // Compute DFT
     cv::dft(complex, complex);
 
+    cv::Mat plans[] = {cv::Mat_<float>(padded), cv::Mat_<float>::zeros(padded.size())};
+    //cv::split(filter, plans);
+    //plans[1].convertTo(plans[1], CV_8UC1, 255);
+    //imwrite("PLAN01.png", plans[1]);
+
     //apply frequency domain filter
     cv::mulSpectrums(complex, filter, complex, 0);
+
+    cv::split(complex, plans);
+    plans[0].convertTo(plans[0], CV_8UC1, 255);
+    imwrite("PLAN00.png", plans[0]);
 
     cv::Mat filtered; // the resulting filtered image
     cv::dft(complex, complex, cv::DFT_INVERSE + cv::DFT_SCALE);
     cv::split(complex, planes);
     cv::magnitude(planes[0], planes[1], filtered);
 
+    //planes[1].convertTo(planes[1], CV_8UC1, 255);
+    //imwrite("PLAN00.png", planes[1]);
+
     // Normalize and show filtered image
     cv::normalize(filtered, filtered, 0, 1, cv::NORM_MINMAX);
+
+    filtered.convertTo(filtered, CV_8UC1, 255);
+    imwrite("PLAN11.png", filtered);
+
     output = filtered.clone();
     return true;
 
