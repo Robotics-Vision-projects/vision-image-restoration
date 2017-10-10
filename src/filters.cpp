@@ -6,38 +6,46 @@ using namespace std;
 
 
 // Substitute each pixel by the local maxima
-cv::Mat Filters::max_filter(cv::Mat &image)
+cv::Mat Filters::max_filter(cv::Mat &image, int max_rad)
 {
     cv::Mat filtered_img;
     image.copyTo(filtered_img);
-    // Create a new matrix with 2 extra cols and rows, filled with zeros.
+    // Create a new matrix with N extra cols and rows, filled with zeros.
     // (Zeros don't have any effect in the max filter).
-    cv::Mat padded(image.rows+2, image.cols+2, CV_8UC1);
-    cv::copyMakeBorder(image, padded, 1, 1, 1, 1, cv::BORDER_CONSTANT,
-                       cv::Scalar::all(0));
+    cv::Mat padded(image.rows+max_rad, image.cols+max_rad, CV_8UC1);
+    cv::copyMakeBorder(image, padded, max_rad, max_rad, max_rad, max_rad,
+                        cv::BORDER_CONSTANT, cv::Scalar::all(0));
     // Go through every pixel and apply the non-linear algorithm.
-    vector <int> window(9);
-    for (auto row=1; row<(padded.rows-1); ++row){
-        for (auto col=1; col<(padded.cols-1); ++col){
-            window[0] = padded.at<uchar>(row-1, col-1);
-            window[1] = padded.at<uchar>(row-1, col);
-            window[2] = padded.at<uchar>(row-1, col+1);
-            window[3] = padded.at<uchar>(row, col-1);
-            window[4] = padded.at<uchar>(row, col);
-            window[5] = padded.at<uchar>(row, col+1);
-            window[6] = padded.at<uchar>(row+1, col-1);
-            window[7] = padded.at<uchar>(row+1, col);
-            window[8] = padded.at<uchar>(row+1, col+1);
-            // Select the maximum value inside the 3x3 window.
-            int max_value = 0;
-            for (int index=0; index<9; ++index)
-                if (window[index] > max_value){
-                    max_value = window[index];
+    int ksize = pow(max_rad*2 + 1, 2);
+    for (auto row=max_rad; row<(padded.rows-max_rad); ++row){
+        for (auto col=max_rad; col<(padded.cols-max_rad); ++col){
+            // Select the maximum value inside the kernel window.
+            // the radius will be incremented until a value higher than 0 is
+            // found, or the maximum allowed radius is used.
+            uchar max_value = 0;
+            for (auto radius=1; radius<=max_rad; ++radius){
+                cv::Mat roi_img = padded(cv::Range(row-radius, row+radius),
+                                         cv::Range(col-radius, col+radius));
+                // Convert the ROI cv::Mat to a std::vector.
+                vector<uchar> window(pow(2*radius+1, 2));
+                for (auto krow = 0; krow < roi_img.rows; ++krow){
+                    for (auto kcol = 0; kcol < roi_img.cols; ++kcol){
+                        window[krow*roi_img.cols + kcol] =
+                                roi_img.at<uchar>(krow, kcol);
+                    }
                 }
-            filtered_img.at<uchar>(row-1, col-1) = max_value;
+                // Look for the maximum value in the selected window.
+                for (auto index=0; index<window.size(); ++index){
+                    if (window[index] > max_value){
+                        max_value = window[index];
+                    }
+                }
+                if (max_value > 0){
+                    break;
+                }
+            }
+            filtered_img.at<uchar>(row-max_rad, col-max_rad) = max_value;
         }
     }
-    cout << "original rowsxcols: " << image.rows << "x" << image.cols << "\n";
-    cout << "padded rowsxcols: " << padded.rows << "x" << padded.cols << "\n";
     return filtered_img;
 }
