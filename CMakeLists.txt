@@ -19,10 +19,13 @@ include_directories("${CMAKE_SOURCE_DIR}/include")
 SET(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 find_package(OpenCV 3 REQUIRED)
 
-SET(SOURCEFILES src/vision_image_restoration.cpp src/tools.cpp src/Img1.cpp src/Img2.cpp src/Img3.cpp src/Img4_1.cpp src/Img4_2.cpp src/Img5.cpp include/tools.h include/Img1.h include/Img2.h include/Img3.h include/Img4_1.h include/Img4_2.h include/Img5.h)
+SET(SOURCEFILES src/vision_image_restoration.cpp src/tools.cpp include/tools.h)
+SET(IM1_SOURCEFILES src/img1.cpp src/tools.cpp include/tools.h)
 
 add_executable(vision_image_restoration ${SOURCEFILES})
+add_executable(image1 ${IM1_SOURCEFILES})
 
 target_link_libraries(vision_image_restoration ${OpenCV_LIBS})
+target_link_libraries(image1 ${OpenCV_LIBS})
 
 MESSAGE(${PROJECT_NAME} " done!")
