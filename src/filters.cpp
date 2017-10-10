@@ -5,9 +5,11 @@
 using namespace std;
 
 
-// Substitute each pixel by the local maxima
 cv::Mat Filters::max_filter(cv::Mat &image, int max_rad)
 {
+    /* 
+     * Substitute each pixel in the image by its local maxima
+    */
     cv::Mat filtered_img;
     image.copyTo(filtered_img);
     // Create a new matrix with N extra cols and rows, filled with zeros.
@@ -48,4 +50,23 @@ cv::Mat Filters::max_filter(cv::Mat &image, int max_rad)
         }
     }
     return filtered_img;
+}
+
+cv::Mat Filters::intensity_enhancement(cv::Mat &gray_img, int increment){
+    /* Increase the intensity of every pixel the specified value.
+     *
+     * The image is clipped, in order to keep pixel type coherency.
+    */
+    // Create the returned variable, and initialize to a copy of the input image
+    cv::Mat enhanced_img;
+    gray_img.copyTo(enhanced_img);
+    // Loop through all pixels and add specified increment to their intensities.
+    for (auto row=0; row<enhanced_img.rows; ++row){
+        for (auto col=0; col<enhanced_img.cols; ++col){
+            // saturate_cast function clips values exceeding variable limits.
+            enhanced_img.at<uchar>(row, col) =  cv::saturate_cast<uchar>(
+                    enhanced_img.at<uchar>(row, col) + increment); 
+        }        
+    }
+    return enhanced_img;
 }
