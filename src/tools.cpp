@@ -1,6 +1,8 @@
 
 #include <tools.h>
 
+using namespace std;
+
 // Rearranges the quadrants of a Fourier image so that the origin is at the
 // center of the image.
 void Tools::dftshift(cv::Mat& mag)
@@ -163,10 +165,12 @@ cv::Mat Tools::get_histogram(cv::Mat &grey_img){
     cv::Mat hist_img = cv::Mat::ones(2*256, 2*256, CV_8U)*255;
     // Normalize the histogram values accordingly to the histogram image size.
     normalize(histogram, histogram, 0, hist_img.rows, cv::NORM_MINMAX, CV_32F);
-    // hist_img = cv::Scalar::all(255);
     int bin_width = cvRound((double)hist_img.cols/bins);
     for(auto bin_index = 0; bin_index < bins; bin_index++)
         {
+            if (bin_index == 255){
+                cout << "hist 255: " << histogram.at<float>(1) << "\n";
+            }
             float bin_value = cvRound(histogram.at<float>(bin_index));
             rectangle(hist_img, cv::Point(bin_index * bin_width, hist_img.rows),
                       cv::Point((bin_index+1) * bin_width,

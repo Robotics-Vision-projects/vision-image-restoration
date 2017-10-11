@@ -22,11 +22,15 @@ find_package(OpenCV 3 REQUIRED)
 set(SOURCEFILES src/vision_image_restoration.cpp src/tools.cpp include/tools.h)
 set(IM1_SOURCEFILES src/img1.cpp src/tools.cpp include/tools.h
 	src/filters.cpp include/filters.h)
+set(IM2_SOURCEFILES src/img2.cpp src/tools.cpp include/tools.h
+	src/filters.cpp include/filters.h)
 
 add_executable(vision_image_restoration ${SOURCEFILES})
 add_executable(image1 ${IM1_SOURCEFILES})
+add_executable(image2 ${IM2_SOURCEFILES})
 
 target_link_libraries(vision_image_restoration ${OpenCV_LIBS})
 target_link_libraries(image1 ${OpenCV_LIBS})
+target_link_libraries(image2 ${OpenCV_LIBS})
 
 message(${PROJECT_NAME} " done!")
