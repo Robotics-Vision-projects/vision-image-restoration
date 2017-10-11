@@ -9,11 +9,6 @@ int main(int argc, char** agrv)
     Img4_1 img4(img4_1);
     cv::Mat filter = img4.createNotchFilter();
 
-    //cv::Mat plans[] = {cv::Mat_<float>(padded), cv::Mat_<float>::zeros(padded.size())};
-    //cv::split(filter, plans);
-    //plans[0].convertTo(plans[0], CV_8UC1, 255);
-    //imwrite("PLAN0.png", plans[0]);
-
     Tools::applyFreqFilter(img4.source, img4.result, filter);
 
     //Tools::spectrumDebug(img4.source);

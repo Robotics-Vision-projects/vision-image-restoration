@@ -90,41 +90,39 @@ bool Tools::applyFreqFilter(cv::Mat &input, cv::Mat &output, cv::Mat &filter)
     int opt_cols = cv::getOptimalDFTSize(img.cols);
     cv::copyMakeBorder(img, padded, 0, opt_rows - img.rows, 0, opt_cols - img.cols, cv::BORDER_CONSTANT);
 
-    // Make place for both the real and complex values by merging planes into a
-    // cv::Mat with 2 channels.
-    // Use float element type because frequency domain ranges are large.
     cv::Mat planes[] = {cv::Mat_<float>(padded), cv::Mat_<float>::zeros(padded.size())};
     cv::Mat complex;
     cv::merge(planes, 2, complex);
 
-    // Compute DFT
     cv::dft(complex, complex);
-
-    cv::Mat plans[] = {cv::Mat_<float>(padded), cv::Mat_<float>::zeros(padded.size())};
-    //cv::split(filter, plans);
-    //plans[1].convertTo(plans[1], CV_8UC1, 255);
-    //imwrite("PLAN01.png", plans[1]);
 
     //apply frequency domain filter
     cv::mulSpectrums(complex, filter, complex, 0);
 
-    cv::split(complex, plans);
-    plans[0].convertTo(plans[0], CV_8UC1, 255);
-    imwrite("PLAN00.png", plans[0]);
+    cv::Mat tmpPlanes[] = {cv::Mat_<float>::zeros(padded.size()), cv::Mat_<float>::zeros(padded.size())};
+    cv::split(complex, tmpPlanes);
+    cv::Mat magFiltered;
+    magnitude(tmpPlanes[0], tmpPlanes[1], magFiltered);
+    //magFiltered = magFiltered(cv::Rect(cv::Point(0, 0), cv::Point(input.cols, input.rows)));
+    dftshift(magFiltered);
+    magFiltered += cv::Scalar::all(1);
+    cv::log(magFiltered, magFiltered);
+    cv::normalize(magFiltered, magFiltered, 0, 1, cv::NORM_MINMAX);
+    magFiltered.convertTo(magFiltered, CV_8UC1, 255);
+    imwrite("magnitudeFiltered.png", magFiltered);
 
     cv::Mat filtered; // the resulting filtered image
     cv::dft(complex, complex, cv::DFT_INVERSE + cv::DFT_SCALE);
     cv::split(complex, planes);
     cv::magnitude(planes[0], planes[1], filtered);
 
-    //planes[1].convertTo(planes[1], CV_8UC1, 255);
-    //imwrite("PLAN00.png", planes[1]);
+    planes[0].convertTo(planes[0], CV_8UC1, 255);
+    imwrite("PLAN00.png", planes[0]);
 
-    // Normalize and show filtered image
     cv::normalize(filtered, filtered, 0, 1, cv::NORM_MINMAX);
 
-    //filtered.convertTo(filtered, CV_8UC1, 255);
-    //imwrite("PLAN11.png", filtered);
+    filtered.convertTo(filtered, CV_8UC1, 255);
+    imwrite("PLAN11.png", filtered);
 
     output = filtered.clone();
     return true;
