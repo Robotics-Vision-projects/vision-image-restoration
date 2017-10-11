@@ -18,7 +18,6 @@ cv::Mat Filters::max_filter(cv::Mat &image, int max_rad)
     cv::copyMakeBorder(image, padded, max_rad, max_rad, max_rad, max_rad,
                         cv::BORDER_CONSTANT, cv::Scalar::all(0));
     // Go through every pixel and apply the non-linear algorithm.
-    int ksize = pow(max_rad*2 + 1, 2);
     for (auto row=max_rad; row<(padded.rows-max_rad); ++row){
         for (auto col=max_rad; col<(padded.cols-max_rad); ++col){
             // Select the maximum value inside the kernel window.
@@ -47,6 +46,57 @@ cv::Mat Filters::max_filter(cv::Mat &image, int max_rad)
                 }
             }
             filtered_img.at<uchar>(row-max_rad, col-max_rad) = max_value;
+        }
+    }
+    return filtered_img;
+}
+
+cv::Mat Filters::adaptive_median_filter(cv::Mat &image, int max_rad)
+{
+    /* 
+     * Substitute each pixel in the image by its local maxima
+    */
+    cv::Mat filtered_img;
+    image.copyTo(filtered_img);
+    // Create a new matrix with N extra cols and rows, filled with zeros.
+    // (Zeros don't have any effect in the max filter).
+    cv::Mat padded(image.rows+max_rad, image.cols+max_rad, CV_8UC1);
+    cv::copyMakeBorder(image, padded, max_rad, max_rad, max_rad, max_rad,
+                        cv::BORDER_CONSTANT, cv::Scalar::all(0));
+    // Go through every pixel and apply the non-linear algorithm.
+    for (auto row=max_rad; row<(padded.rows-max_rad); ++row){
+        for (auto col=max_rad; col<(padded.cols-max_rad); ++col){
+            // If the current pixel is not 0 or 255, let it unmodified.
+            int center_pixel = padded.at<uchar>(row, col);
+            if  (center_pixel != 0 && center_pixel != 255){
+                filtered_img.at<uchar>(row-max_rad, col-max_rad) = center_pixel;
+                continue;
+            }
+            // Select the maximum value inside the kernel window.
+            // the radius will be incremented until a value higher than 0 is
+            // found, or the maximum allowed radius is used.
+            uchar median = 0;
+            for (auto radius=1; radius<=max_rad; ++radius){
+                cv::Mat roi_img = padded(cv::Range(row-radius, row+radius),
+                                         cv::Range(col-radius, col+radius));
+                // Convert the ROI cv::Mat to a std::vector.
+                vector<uchar> window(pow(2*radius+1, 2));
+                for (auto krow = 0; krow < roi_img.rows; ++krow){
+                    for (auto kcol = 0; kcol < roi_img.cols; ++kcol){
+                        window[krow*roi_img.cols + kcol] =
+                                roi_img.at<uchar>(krow, kcol);
+                    }
+                }
+                // Calculate the vector median value. Break the loop if it is
+                // not an extreme value.
+                int ksize = pow(radius*2 + 1, 2);
+                sort(window.begin(), window.end());
+                median = window[ksize/2];
+                if (median != 0 && median != 255){
+                    break;
+                }
+            }
+            filtered_img.at<uchar>(row-max_rad, col-max_rad) = median;
         }
     }
     return filtered_img;

@@ -168,9 +168,6 @@ cv::Mat Tools::get_histogram(cv::Mat &grey_img){
     int bin_width = cvRound((double)hist_img.cols/bins);
     for(auto bin_index = 0; bin_index < bins; bin_index++)
         {
-            if (bin_index == 255){
-                cout << "hist 255: " << histogram.at<float>(1) << "\n";
-            }
             float bin_value = cvRound(histogram.at<float>(bin_index));
             rectangle(hist_img, cv::Point(bin_index * bin_width, hist_img.rows),
                       cv::Point((bin_index+1) * bin_width,
