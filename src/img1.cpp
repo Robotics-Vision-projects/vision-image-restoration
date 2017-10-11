@@ -18,7 +18,7 @@ int main(int argc, char** argv)
     cv::medianBlur(filtered_img, median_img, 3);
     cv::Mat hist_median = Tools::get_histogram(median_img);
     // Enhance intensity values.
-    cv::Mat enhanced_img = Filters::intensity_enhancement(median_img, 50);
+    cv::Mat enhanced_img = Tools::log_transform(median_img);
     cv::Mat hist_enhanced = Tools::get_histogram(enhanced_img);
     // Show and save the filtered image.
     cv::namedWindow("filtered image", cv::WINDOW_NORMAL);
@@ -34,7 +34,7 @@ int main(int argc, char** argv)
     cv::namedWindow("enhanced image", cv::WINDOW_NORMAL);
     cv::imshow("enhanced image", enhanced_img);
     cv::waitKey(0);
-    cv::imwrite("./results/image1/03-enhanced.png", enhanced_img);
+    cv::imwrite("./results/image1/03-log_transormed.png", enhanced_img);
     // Show and save the histogram of the original image.
     cv::imshow("original histogram", hist_img);
     cv::waitKey(0);
@@ -43,13 +43,14 @@ int main(int argc, char** argv)
     cv::imshow("filtered histogram", hist_filtered);
     cv::waitKey(0);
     cv::imwrite("./results/image1/01-filtered_histrogram_k3.png", hist_filtered);
-    // Show and save the histogram of the original image.
+    // Show and save the histogram of the median filtered image.
     cv::imshow("median histogram", hist_median);
     cv::waitKey(0);
-    cv::imwrite("./results/image1/02-median_histrogram.png", hist_img);
-    // Show and save the histogram of the original image.
+    cv::imwrite("./results/image1/02-median_histrogram.png", hist_median);
+    // Show and save the histogram of the log enhancd image.
     cv::imshow("intensity enhanced histogram", hist_enhanced);
+    cv::imwrite("./results/image1/03-log_transormed_histrogram.png",
+                hist_enhanced);
     cv::waitKey(0);
-    cv::imwrite("./results/image1/03-enhanced_histrogram.png", hist_img);
     return 0;
 }

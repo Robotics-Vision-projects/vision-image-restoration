@@ -175,3 +175,14 @@ cv::Mat Tools::get_histogram(cv::Mat &grey_img){
         }
     return hist_img;
 }
+
+cv::Mat Tools::log_transform(cv::Mat &grey_img, int c){
+    cv::Mat transformed_img;
+    // Copy the input image and use a 32F depth (to store log values).
+    grey_img.convertTo(transformed_img, CV_32F);
+    cv::log(c*(transformed_img+1), transformed_img);
+    normalize(transformed_img, transformed_img, 0, 1, cv::NORM_MINMAX);
+    transformed_img *= 255;
+    transformed_img.convertTo(transformed_img, CV_8UC1);
+    return transformed_img;
+}

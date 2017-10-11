@@ -42,4 +42,8 @@ public:
     /// \brief Get and plot the histogram of the image and save it to a file.
     /// \param gray_img input greyscale image
     static cv::Mat get_histogram(cv::Mat &grey_img);
+
+    /// \brief perform a logarithmic transformation over the images
+    static cv::Mat log_transform(cv::Mat &grey_img, int c=1);
+
 };
