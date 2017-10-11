@@ -123,8 +123,8 @@ bool Tools::applyFreqFilter(cv::Mat &input, cv::Mat &output, cv::Mat &filter)
     // Normalize and show filtered image
     cv::normalize(filtered, filtered, 0, 1, cv::NORM_MINMAX);
 
-    filtered.convertTo(filtered, CV_8UC1, 255);
-    imwrite("PLAN11.png", filtered);
+    //filtered.convertTo(filtered, CV_8UC1, 255);
+    //imwrite("PLAN11.png", filtered);
 
     output = filtered.clone();
     return true;
