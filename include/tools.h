@@ -46,4 +46,7 @@ public:
     /// \brief perform a logarithmic transformation over the images
     static cv::Mat log_transform(cv::Mat &grey_img, int c=1);
 
+    /// \brief perform a gamma correction on the input image
+    static cv::Mat gamma_correction(cv::Mat &grey_img,  double gamma, int c=1);
+
 };

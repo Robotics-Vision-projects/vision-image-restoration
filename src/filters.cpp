@@ -20,6 +20,12 @@ cv::Mat Filters::max_filter(cv::Mat &image, int max_rad)
     // Go through every pixel and apply the non-linear algorithm.
     for (auto row=max_rad; row<(padded.rows-max_rad); ++row){
         for (auto col=max_rad; col<(padded.cols-max_rad); ++col){
+            // If the current pixel is not 0 or 255, let it unmodified.
+            int center_pixel = padded.at<uchar>(row, col);
+            if  (center_pixel != 0){
+                filtered_img.at<uchar>(row-max_rad, col-max_rad) = center_pixel;
+                continue;
+            }
             // Select the maximum value inside the kernel window.
             // the radius will be incremented until a value higher than 0 is
             // found, or the maximum allowed radius is used.
