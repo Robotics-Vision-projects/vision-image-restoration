@@ -74,7 +74,7 @@ int main(int argc, char** argv)
     cv::namedWindow("Gauss smoothed image", cv::WINDOW_NORMAL);
     cv::imwrite("./results/image2/04-mean_k3.jpg", mean_filtered_img, comp);
     cv::imwrite("./results/image2/04-mean_k5.jpg", mean_filtered_img_5, comp);
-    cv::imshow("Gauss smoothed image", mean_filtered_img);
+    cv::imshow("Mean filtered image", mean_filtered_img);
     cv::waitKey(0);
 	return 0;
 }
