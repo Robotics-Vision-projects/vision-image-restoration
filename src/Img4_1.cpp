@@ -83,8 +83,8 @@ cv::Mat Img4_1::createNotchFilter()
     Mat complex;
     merge(planes, 2, complex);
 
-    mag.convertTo(mag, CV_8UC1, 255);
-    imwrite("filterMagnitude.png", mag);
+    //mag.convertTo(mag, CV_8UC1, 255);
+    //imwrite("filterMagnitude.png", mag);
 
     return complex;
 }

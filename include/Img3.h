@@ -13,7 +13,7 @@ public:
 
     Img3(cv::Mat& src);
 
-    void adaptiveNoiseReduction(int lKernelRadius, int gKernelRadius);
+    void adaptiveNoiseReduction(int lKernelRadius, double globDev);
 
     cv::Mat source;
     cv::Mat result;

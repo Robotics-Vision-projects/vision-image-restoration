@@ -8,7 +8,7 @@ project(vision_image_restoration)
 set(ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 
 # set the output folder where your program will be created
-set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
+set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR})
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
@@ -26,11 +26,11 @@ set(IM1_SOURCEFILES src/img1.cpp src/tools.cpp include/tools.h
 set(IM2_SOURCEFILES src/img2.cpp src/tools.cpp include/tools.h
 	src/filters.cpp include/filters.h)
 
-add_executable(vision_image_restoration ${SOURCEFILES})
+add_executable(image3_and_4 ${SOURCEFILES})
 add_executable(image1 ${IM1_SOURCEFILES})
 add_executable(image2 ${IM2_SOURCEFILES})
 
-target_link_libraries(vision_image_restoration ${OpenCV_LIBS})
+target_link_libraries(image3_and_4 ${OpenCV_LIBS})
 target_link_libraries(image1 ${OpenCV_LIBS})
 target_link_libraries(image2 ${OpenCV_LIBS})
 

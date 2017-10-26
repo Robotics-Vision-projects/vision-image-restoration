@@ -129,8 +129,8 @@ bool Tools::applyFreqFilter(cv::Mat &input, cv::Mat &output, cv::Mat &filter)
     cv::split(complex, planes);
     cv::magnitude(planes[0], planes[1], filtered);
 
-    planes[0].convertTo(planes[0], CV_8UC1, 255);
-    imwrite("PLAN00.png", planes[0]);
+    //planes[0].convertTo(planes[0], CV_8UC1, 255);
+    //imwrite("PLAN00.png", planes[0]);
 
     cv::normalize(filtered, filtered, 0, 1, cv::NORM_MINMAX);
 
