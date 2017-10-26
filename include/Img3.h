@@ -8,11 +8,12 @@ class Img3
 {
 private:
 
-    cv::Mat adaptiveNoiseReduction(cv::Mat &image, int lKernelRadius, int gKernelRadius);
 
 public:
 
     Img3(cv::Mat& src);
+
+    void adaptiveNoiseReduction(int lKernelRadius, int gKernelRadius);
 
     cv::Mat source;
     cv::Mat result;
