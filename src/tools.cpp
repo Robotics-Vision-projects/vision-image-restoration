@@ -1,7 +1,10 @@
 
 #include <tools.h>
 
-// Rearranges the quadrants of a Fourier image so that the origin is at the center of the image.
+using namespace std;
+
+// Rearranges the quadrants of a Fourier image so that the origin is at the
+// center of the image.
 void Tools::dftshift(cv::Mat& mag)
 {
     int cx = mag.cols / 2;
@@ -27,7 +30,8 @@ bool Tools::spectrumDebug(cv::Mat &input)
     cv::Mat img = input.clone();
     if(img.channels() != 1)
     {
-        std::cout << std::endl << "Error: this function is for single channel grayscale images, channels: " << img.channels();
+        std::cout << std::endl << "Error: this function is for single channel "
+                "grayscale images, channels: " << img.channels();
         return false;
     }
 
@@ -35,19 +39,22 @@ bool Tools::spectrumDebug(cv::Mat &input)
     cv::Mat padded;
     int opt_rows = cv::getOptimalDFTSize(img.rows);
     int opt_cols = cv::getOptimalDFTSize(img.cols);
-    cv::copyMakeBorder(img, padded, 0, opt_rows - img.rows, 0, opt_cols - img.cols, cv::BORDER_CONSTANT);
+    cv::copyMakeBorder(img, padded, 0, opt_rows - img.rows, 0,
+                       opt_cols - img.cols, cv::BORDER_CONSTANT);
 
     // Make place for both the real and complex values by merging planes into a
     // cv::Mat with 2 channels.
     // Use float element type because frequency domain ranges are large.
-    cv::Mat planes[] = {cv::Mat_<float>(padded), cv::Mat_<float>::zeros(padded.size())};
+    cv::Mat planes[] = {cv::Mat_<float>(padded),
+                        cv::Mat_<float>::zeros(padded.size())};
     cv::Mat complex;
     cv::merge(planes, 2, complex);
 
     // Compute DFT
     cv::dft(complex, complex);
 
-    // Split real and complex planes (you can reuse the 'planes' array to save the result)
+    // Split real and complex planes (you can reuse the 'planes' array to save
+    // the result)
     cv::split(complex, planes);
 
     // Compute the magnitude and phase (see e.g. cv::cartToPolar)
@@ -67,9 +74,9 @@ bool Tools::spectrumDebug(cv::Mat &input)
     cv::normalize(mag, mag, 0, 1, cv::NORM_MINMAX);
     cv::normalize(phase, phase, 0, 1, cv::NORM_MINMAX);
     mag.convertTo(mag, CV_8UC1, 255);
-    cv::imwrite("debug/magnitude.png", mag);
+    cv::imwrite("./debug/magnitude.png", mag);
     phase.convertTo(phase, CV_8UC1, 255);
-    cv::imwrite("debug/phase.png", phase);
+    cv::imwrite("./debug/phase.png", phase);
 
     return true;
 
@@ -80,7 +87,8 @@ bool Tools::applyFreqFilter(cv::Mat &input, cv::Mat &output, cv::Mat &filter)
     cv::Mat img = input.clone();
     if(img.channels() != 1)
     {
-        std::cout << std::endl << "Error: this function is for single channel grayscale images, channels: " << img.channels();
+        std::cout << std::endl << "Error: this function is for single channel "
+                "grayscale images, channels: " << img.channels();
         return false;
     }
 
@@ -88,9 +96,14 @@ bool Tools::applyFreqFilter(cv::Mat &input, cv::Mat &output, cv::Mat &filter)
     cv::Mat padded;
     int opt_rows = cv::getOptimalDFTSize(img.rows);
     int opt_cols = cv::getOptimalDFTSize(img.cols);
-    cv::copyMakeBorder(img, padded, 0, opt_rows - img.rows, 0, opt_cols - img.cols, cv::BORDER_CONSTANT);
+    cv::copyMakeBorder(img, padded, 0, opt_rows - img.rows, 0,
+                       opt_cols - img.cols, cv::BORDER_CONSTANT);
 
-    cv::Mat planes[] = {cv::Mat_<float>(padded), cv::Mat_<float>::zeros(padded.size())};
+    // Make place for both the real and complex values by merging planes into a
+    // cv::Mat with 2 channels.
+    // Use float element type because frequency domain ranges are large.
+    cv::Mat planes[] = {cv::Mat_<float>(padded),
+                        cv::Mat_<float>::zeros(padded.size())};
     cv::Mat complex;
     cv::merge(planes, 2, complex);
 
@@ -129,7 +142,8 @@ bool Tools::applyFreqFilter(cv::Mat &input, cv::Mat &output, cv::Mat &filter)
 
 }
 
-void Tools::debugRandomKernel(cv::Mat &input, size_t kernelSize, size_t x, size_t y)
+void Tools::debugRandomKernel(cv::Mat &input, size_t kernelSize,
+                              size_t x, size_t y)
 {
     if( x == 0 && y == 0)
     {
@@ -151,4 +165,53 @@ void Tools::debugRandomKernel(cv::Mat &input, size_t kernelSize, size_t x, size_
         std::cout << std::endl;
     }
 
+}
+
+cv::Mat Tools::get_histogram(cv::Mat &grey_img){
+    // Calculate histogram of a greyscale image.
+    cv::Mat histogram;
+    int channels[] = {0};
+    int dims = 1;
+    int bins = 256;
+    float range[] = {0, 255};
+    const float *ranges[] = {range};
+    // Calculate the histogram.
+    cv::calcHist(&grey_img, 1, channels, cv::Mat(),
+                 histogram, dims, &bins, ranges);
+    // Draw the histogram on an image
+    cv::Mat hist_img = cv::Mat::ones(2*256, 2*256, CV_8U)*255;
+    // Normalize the histogram values accordingly to the histogram image size.
+    normalize(histogram, histogram, 0, hist_img.rows, cv::NORM_MINMAX, CV_32F);
+    int bin_width = cvRound((double)hist_img.cols/bins);
+    for(auto bin_index = 0; bin_index < bins; bin_index++)
+        {
+            float bin_value = cvRound(histogram.at<float>(bin_index));
+            rectangle(hist_img, cv::Point(bin_index * bin_width, hist_img.rows),
+                      cv::Point((bin_index+1) * bin_width,
+                                hist_img.rows - bin_value), 0, 
+                                CV_FILLED, 8, 0 );
+        }
+    return hist_img;
+}
+
+cv::Mat Tools::log_transform(cv::Mat &grey_img, int c){
+    cv::Mat transformed_img;
+    // Copy the input image and use a 32F depth (to store log values).
+    grey_img.convertTo(transformed_img, CV_32F);
+    cv::log(c*(transformed_img+1), transformed_img);
+    normalize(transformed_img, transformed_img, 0, 1, cv::NORM_MINMAX);
+    transformed_img *= 255;
+    transformed_img.convertTo(transformed_img, CV_8UC1);
+    return transformed_img;
+}
+
+cv::Mat Tools::gamma_correction(cv::Mat &grey_img, double gamma, int c){
+    cv::Mat transformed_img;
+    // Copy the input image and use a 32F depth (to store log values).
+    grey_img.convertTo(transformed_img, CV_32F);
+    cv::pow(c*transformed_img, gamma, transformed_img);
+    normalize(transformed_img, transformed_img, 0, 1, cv::NORM_MINMAX);
+    transformed_img *= 255;
+    transformed_img.convertTo(transformed_img, CV_8UC1);
+    return transformed_img;
 }
